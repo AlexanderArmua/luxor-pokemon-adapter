@@ -1,0 +1,237 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+      "title": "Pokemon API",
+      "version": "1.0.0",
+      "description": "API to fetch Pokemon information"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000"
+      }
+    ],
+    "paths": {
+      "/health": {
+        "get": {
+          "summary": "Check server health",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "Server is up and running"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/pokemons/byId/{pokemonId}": {
+        "get": {
+          "summary": "Get a Pokemon by its ID",
+          "parameters": [
+            {
+              "name": "pokemonId",
+              "in": "path",
+              "required": true,
+              "description": "ID of the Pokemon",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PokemonApi"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorNotFound"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/pokemons/byName/{pokemonName}": {
+        "get": {
+          "summary": "Get a Pokemon by its name",
+          "parameters": [
+            {
+              "name": "pokemonName",
+              "in": "path",
+              "required": true,
+              "description": "Name of the Pokemon",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PokemonApi"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorNotFound"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/pokemons/byRange": {
+        "post": {
+          "summary": "Get a list of Pokemons with skip and take",
+          "requestBody": {
+            "description": "Skip and Take parameters",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkipTake"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PokemonsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "PokemonApi": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "number": { "type": "string" },
+            "name": { "type": "string" },
+            "weight": {
+              "type": "object",
+              "properties": {
+                "minimum": { "type": "string" },
+                "maximum": { "type": "string" }
+              }
+            },
+            "height": {
+              "type": "object",
+              "properties": {
+                "minimum": { "type": "string" },
+                "maximum": { "type": "string" }
+              }
+            },
+            "classification": { "type": "string" },
+            "types": { "type": "array", "items": { "type": "string" } },
+            "resistant": { "type": "array", "items": { "type": "string" } },
+            "attacks": {
+              "type": "object",
+              "properties": {
+                "fast": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string" },
+                      "type": { "type": "string" },
+                      "damage": { "type": "number" }
+                    }
+                  }
+                },
+                "special": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string" },
+                      "type": { "type": "string" },
+                      "damage": { "type": "number" }
+                    }
+                  }
+                }
+              }
+            },
+            "weaknesses": { "type": "array", "items": { "type": "string" } },
+            "fleeRate": { "type": "number" },
+            "maxCP": { "type": "number" },
+            "evolutions": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/PokemonApi" }
+            },
+            "evolutionRequirements": {
+              "type": "object",
+              "properties": {
+                "amount": { "type": "number" },
+                "name": { "type": "string" }
+              }
+            },
+            "maxHP": { "type": "number" },
+            "image": { "type": "string" }
+          }
+        },
+        "SkipTake": {
+          "type": "object",
+          "properties": {
+            "skip": { "type": "number" },
+            "take": { "type": "number" }
+          }
+        },
+        "PokemonsResponse": {
+          "type": "object",
+          "properties": {
+            "pokemons": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/PokemonApi" }
+            }
+          }
+        },
+        "ErrorNotFound": {
+          "type": "object",
+          "properties": {
+            "message": { "type": "string", "example": "Pokemon not found" }
+          }
+        }
+      }
+    }
+  }
+  
