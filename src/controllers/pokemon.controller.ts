@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-
 import { PokemonService } from '@services/pokemon/pokemon.service';
+import { PokemonApi } from '@custom-types/pokemons';
 
 const service = PokemonService.getInstance();
 
@@ -42,9 +42,11 @@ const getPokemonByPokemonName = async (req: Request, res: Response, next: NextFu
 
 const addPokemonToCache = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const body = req.body;
+        const body: PokemonApi = req.body;
 
-        res.status(201).json({ newPokemon: body });
+        const newPokemon = await service.storeOne(body);
+
+        res.status(201).json({ newPokemon });
     } catch (error) {
         next(error);
     }

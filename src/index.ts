@@ -2,6 +2,7 @@ import express from 'express';
 import routerApi from '@routes/index';
 import { logErrors, errorHandler, boomErrorHandler } from '@middlewares/errorMiddleware';
 import { AppConfig } from '@config';
+import { startEventProvider } from 'lib/events';
 
 //import { EventProvider } from '@core/events/event.provider';
 
@@ -9,6 +10,9 @@ const app = express();
 
 // Allow to receive JSON
 app.use(express.json());
+
+// Handle events
+startEventProvider();
 
 // Define all routes
 routerApi(app);

@@ -1,21 +1,18 @@
-import prisma from '@db/prisma-client';
-import { Pokemon, Prisma } from '@prisma/client';
 import { GraphQlApiRepository } from '@repositories/pokemonAPI/pokemonAPIRepository';
 import { PokemonRepository } from '@repositories/pokemonBD/pokemonsRepository';
 import { PokemonApi } from '@custom-types/pokemons';
+import { EventManager } from 'lib/events/event.manager';
+import POKEMON_EVENTS from 'lib/events/event.constant';
 
 export class PokemonService {
   private static instance: PokemonService;
-  private static pokemonAPI: GraphQlApiRepository;
-  private static pokemonDB: PokemonRepository;
+
+  private static pokemonAPI = new GraphQlApiRepository();
+  private static pokemonDB = new PokemonRepository();
 
   static getInstance(): PokemonService {
     if (!PokemonService.instance) {
       PokemonService.instance = new PokemonService();
-
-      // TODO: Redifinir mejor
-      PokemonService.pokemonAPI = new GraphQlApiRepository();
-      PokemonService.pokemonDB = new PokemonRepository();
     }
 
     return PokemonService.instance;
@@ -33,10 +30,9 @@ export class PokemonService {
 
     const pokemonsAPI = await PokemonService.pokemonAPI.getPokemonsInRange(skip + take);
     if (pokemonsAPI.length > 0) {
-      // TODO: Mover a un evento
-      for await (const pokemonAPI of pokemonsAPI) {
+      for (const newPokemon of pokemonsAPI) {
         // TODO: Explicar el problema de no tener un mutex, como puede pasar que dos pokemons pueden tratar de insertarse al mismo tiempo
-        await PokemonService.pokemonDB.storeOne(pokemonAPI.id, pokemonAPI.name, Number(pokemonAPI.number), pokemonAPI);
+        EventManager.emitEvent(POKEMON_EVENTS.NEW_POKEMON_CREATED, newPokemon);
       }
     }
 
@@ -51,8 +47,7 @@ export class PokemonService {
 
     const pokemonAPI = await PokemonService.pokemonAPI.getPokemonById(pokemonId);
     if (pokemonAPI) {
-      // TODO: Mover a un evento
-      await PokemonService.pokemonDB.storeOne(pokemonAPI.id, pokemonAPI.name, Number(pokemonAPI.number), pokemonAPI);
+      EventManager.emitEvent(POKEMON_EVENTS.NEW_POKEMON_CREATED, pokemonAPI);
     }
 
     return pokemonAPI;
@@ -66,23 +61,16 @@ export class PokemonService {
 
     const pokemonAPI = await PokemonService.pokemonAPI.getPokemonByName(pokemonName);
     if (pokemonAPI) {
-      // TODO: Mover a un evento
-      await PokemonService.pokemonDB.storeOne(pokemonAPI.id, pokemonAPI.name, Number(pokemonAPI.number), pokemonAPI);
+      EventManager.emitEvent(POKEMON_EVENTS.NEW_POKEMON_CREATED, pokemonAPI);
     }
 
     return pokemonAPI;
   }
 
-  async storeOne(data: Pokemon): Promise<Pokemon | null> {
-    const { name, pokemonId, number } = data;
+  async storeOne(data: PokemonApi): Promise<PokemonApi | null> {
+    const pokemonCreated = await PokemonService.pokemonDB.storeOne(data.id, data.name, Number(data.number), data);
 
-    return await prisma.pokemon.create({
-      data: {
-        name,
-        pokemonId,
-        number,
-        data: data as unknown as Prisma.JsonObject
-      }
-    })
+    // TODO: Buscar la forma en la que se pueda evitar esta transformación
+    return pokemonCreated?.data as unknown as PokemonApi;
   }
 }
