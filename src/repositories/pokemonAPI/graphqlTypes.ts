@@ -2,9 +2,9 @@ import { gql } from "graphql-request";
 
 export type GraphQlTypes = string | number | boolean;
 
-//  TODO: Pensar como modelar las evoluciones
-export const pokemonFragment = gql`
-  fragment PokemonInfoFragment on Pokemon {
+//  TODO: Mejorar mecanismo de evoluciones para no tener que guardar duplicado
+const pokemonBaseFragment = gql`
+  fragment PokemonBaseFragment on Pokemon {
     id
     number
     name
@@ -42,3 +42,45 @@ export const pokemonFragment = gql`
     image
   }
 `;
+
+const pokemonFragment = gql`
+  fragment PokemonFragment on Pokemon {
+    ...PokemonBaseFragment
+    evolutions {
+      id
+      name
+      number
+    }
+  }
+  ${pokemonBaseFragment}
+`;
+
+
+const GET_POKEMON_GQL_BY_NAME = gql`
+  query Pokemon($name: String) {
+      pokemon(name: $name) {
+          ...PokemonFragment
+      }
+  }
+  ${pokemonFragment}
+`;
+
+const GET_POKEMON_GQL_BY_ID = gql`
+  query Pokemon($id: String) {
+    pokemon(id: $id) {
+      ...PokemonFragment
+    }
+  }
+  ${pokemonFragment}
+`;
+
+const GET_POKEMONS_GQL_RANGE = gql`
+  query Pokemons($first: Int!) {
+      pokemons(first: $first) {
+        ...PokemonFragment
+      }
+  }
+  ${pokemonFragment}
+`;
+
+export { GET_POKEMON_GQL_BY_NAME, GET_POKEMON_GQL_BY_ID, GET_POKEMONS_GQL_RANGE }

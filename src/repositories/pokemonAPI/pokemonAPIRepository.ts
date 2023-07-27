@@ -1,7 +1,7 @@
 import { GraphQLClient, gql } from 'graphql-request';
 import { AppConfig } from '@config';
 import { PokemonApi, PokemonApiResponse } from '@custom-types/pokemons';
-import { GraphQlTypes, pokemonFragment } from './graphqlTypes';
+import { GET_POKEMONS_GQL_RANGE, GET_POKEMON_GQL_BY_ID, GET_POKEMON_GQL_BY_NAME, GraphQlTypes } from './graphqlTypes';
 
 const API_POKEMON_GRAPHQL = AppConfig.api.pokemons;
 
@@ -21,52 +21,25 @@ export class GraphQlApiRepository {
     }
 
     async getPokemonById(pokemonId: string): Promise<PokemonApi | null> {
-        const query = gql`
-            query Pokemon($id: String) {
-                pokemon(id: $id) {
-                    ...PokemonInfoFragment
-                }
-            }
-            ${pokemonFragment}
-        `;
-
         const variables = { id: pokemonId };
 
-        const response = await this.makeGraphQLQuery<PokemonApiResponse>(query, variables);
+        const response = await this.makeGraphQLQuery<PokemonApiResponse>(GET_POKEMON_GQL_BY_ID, variables);
 
         return response?.pokemon || null;
     }
 
     async getPokemonByName(pokemonName: string): Promise<PokemonApi | null> {
-        const query = gql`
-            query Pokemon($name: String) {
-                pokemon(name: $name) {
-                    ...PokemonInfoFragment
-                }
-            }
-            ${pokemonFragment}
-        `;
-
         const variables = { name: pokemonName };
 
-        const response = await this.makeGraphQLQuery<PokemonApiResponse>(query, variables)
+        const response = await this.makeGraphQLQuery<PokemonApiResponse>(GET_POKEMON_GQL_BY_NAME, variables)
 
         return response?.pokemon || null;
     }
 
     async getPokemonsInRange(take: number): Promise<PokemonApi[]> {
-        const query = gql`
-            query Pokemons($first: Int!) {
-                pokemons(first: $first) {
-                    ...PokemonInfoFragment
-                }
-            }
-            ${pokemonFragment}
-        `;
-
         const variables = { first: take };
 
-        const response = await this.makeGraphQLQuery<PokemonApiResponse>(query, variables)
+        const response = await this.makeGraphQLQuery<PokemonApiResponse>(GET_POKEMONS_GQL_RANGE, variables)
 
         return response?.pokemons || [];
     }
