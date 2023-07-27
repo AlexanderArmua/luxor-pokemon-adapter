@@ -32,7 +32,8 @@
       "@routes/*": ["routes/*"],
       "@middlewares/*": ["middlewares/*"],
       "@db/*": ["lib/db/*"],
-      "@logger": ["lib/logger"]
+      "@logger": ["lib/logger"],
+      "@events": ["lib/events"]
     }
   }
 }

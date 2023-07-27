@@ -2,7 +2,6 @@ import { GraphQlApiRepository } from '@repositories/pokemonAPI/pokemonAPIReposit
 import { PokemonRepository } from '@repositories/pokemonBD/pokemonsRepository';
 import { PokemonApi } from '@custom-types/pokemons';
 import { EventManager } from 'lib/events/event.manager';
-import POKEMON_EVENTS from 'lib/events/event.constant';
 
 export class PokemonService {
   private static instance: PokemonService;
@@ -32,7 +31,7 @@ export class PokemonService {
     if (pokemonsAPI.length > 0) {
       for (const newPokemon of pokemonsAPI) {
         // TODO: Explicar el problema de no tener un mutex, como puede pasar que dos pokemons pueden tratar de insertarse al mismo tiempo
-        EventManager.emitEvent(POKEMON_EVENTS.NEW_POKEMON_CREATED, newPokemon);
+        EventManager.emitNewPokemon(newPokemon);
       }
     }
 
@@ -47,7 +46,7 @@ export class PokemonService {
 
     const pokemonAPI = await PokemonService.pokemonAPI.getPokemonById(pokemonId);
     if (pokemonAPI) {
-      EventManager.emitEvent(POKEMON_EVENTS.NEW_POKEMON_CREATED, pokemonAPI);
+      EventManager.emitNewPokemon(pokemonAPI);
     }
 
     return pokemonAPI;
@@ -61,7 +60,7 @@ export class PokemonService {
 
     const pokemonAPI = await PokemonService.pokemonAPI.getPokemonByName(pokemonName);
     if (pokemonAPI) {
-      EventManager.emitEvent(POKEMON_EVENTS.NEW_POKEMON_CREATED, pokemonAPI);
+      EventManager.emitNewPokemon(pokemonAPI);
     }
 
     return pokemonAPI;

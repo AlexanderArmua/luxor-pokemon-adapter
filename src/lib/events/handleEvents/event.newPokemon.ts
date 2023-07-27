@@ -1,14 +1,19 @@
-import { PokemonApi } from "@custom-types/pokemons";
-import { PokemonService } from "@services/pokemon/pokemon.service";
+import { AppConfig } from '@config';
 
-const pokemonService = PokemonService.getInstance();
+const customHeaders = {
+    "Content-Type": "application/json",
+}
 
-const handleEventNewPokemon = async (pokemnonData: PokemonApi) => {
-    // TODO: Llamada REST en caso de microservicios
-    // TODO: Validar errores
+const handleEventNewPokemon = async (pokemnonData: any) => {
     try {
-        await pokemonService.storeOne(pokemnonData);
+        await fetch(AppConfig.pokemonAdapterUrl, { 
+            headers: customHeaders,
+            body: JSON.stringify(pokemnonData), 
+            method: "POST" 
+        });
+        console.log("CREADO")
     } catch (err) {
+        // TODO: Validar errores
         console.error("TODO: Ocurrió un error al guardar acá");
     }
 }

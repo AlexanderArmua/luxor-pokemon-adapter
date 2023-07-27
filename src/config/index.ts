@@ -21,5 +21,6 @@ export const AppConfig = {
   },
   api: {
     pokemons: process.env.API_GRAPHQL_POKEMONS || ''
-  }
+  },
+  pokemonAdapterUrl: process.env.POKEMON_ADAPTER_URL || '' 
 };

@@ -1,6 +1,6 @@
 import { EventEmitter } from "eventemitter3";
 
-export class PokemonEventEmitter {
+class PokemonEventEmitter {
     private static eventEmitter: EventEmitter;
 
     public static getInstance(): EventEmitter {
@@ -10,3 +10,5 @@ export class PokemonEventEmitter {
         return this.eventEmitter;
     }
 }
+
+export { PokemonEventEmitter } 

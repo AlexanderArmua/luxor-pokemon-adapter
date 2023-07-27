@@ -2,9 +2,7 @@ import express from 'express';
 import routerApi from '@routes/index';
 import { logErrors, errorHandler, boomErrorHandler } from '@middlewares/errorMiddleware';
 import { AppConfig } from '@config';
-import { startEventProvider } from 'lib/events';
-
-//import { EventProvider } from '@core/events/event.provider';
+import { startEventProvider } from '@events';
 
 const app = express();
 

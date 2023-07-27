@@ -22,7 +22,8 @@ export default () => ({
     "@routes/(.*)": ["<rootDir>/routes/$1"],
     "@middlewares/(.*)": ["<rootDir>/middlewares/$1"],
     "@db/(.*)": ["<rootDir>/lib/db/$1"],
-    "@logger": ["<rootDir>/lib/logger/index.ts"]
+    "@logger": ["<rootDir>/lib/logger/index.ts"],
+    "@events": ["<rootDir>/lib/events/index.ts"]
   },
   coveragePathIgnorePatterns: [
     '/node_modules/',
