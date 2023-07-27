@@ -34,7 +34,7 @@ The service will be available at http://localhost:3000.
 
 The API exposed by the service is documented using OpenAPI. You can find the complete specification at the following link:
 
-[https://chat.openai.com/link-to-openapi-spec](API DOCUMENTATION)
+[http://localhost:3000/api-docs/](http://localhost:3000/api-docs/)
 
 ## Approach Taken
 
@@ -45,6 +45,14 @@ The project development followed an API-first approach. The API was first specif
 The project is organized into the following folders:
 
 - src: Contains the application source code.
+- src/config: Contains the entry point to read configurations.
+- src/controllers: Intermediary between routes and services, handle error messages and status codes.
+- src/lib: Contains files useful in the entire project db, events and logger.
+- src/middlewares: Contains middleware files to handle errors.
+- src/repositories: Contains access to database and graphql external api.
+- src/routes: Routes definition.
+- src/services: Contains bussiness logic, like decide if go to db or api and cache.
+- src/types: Contains types definitions.
 - prisma: Contains files related to the Prisma ORM and database migrations.
 
 ## Configuration of Environment Variables
@@ -54,11 +62,14 @@ The required environment variables to configure the service are as follows:
 - NODE_ENV: Application environment (e.g., "development" or "production").
 - DATABASE_URL: PostgreSQL database URL in the format postgresql://user:password@host:port/database.
 - API_GRAPHQL_POKEMONS: External GraphQL API URL to retrieve Pokemon information.
+- PORT: Port that the service uses.
+- POKEMON_ADAPTER_URL: Current url where the service can be called.
 
 ## Useful Commands
 
 - yarn dev: Start the service in development mode using nodemon for automatic restart.
 - yarn migrate:prod: Deploy database migrations in production environment using Prisma.
+- yarn prisma:generate: Generates Prisma Database client library to allow us to interact with the database using a type-safe API.
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
