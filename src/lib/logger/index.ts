@@ -1,6 +1,6 @@
 import pino from 'pino';
 import tracer from 'dd-trace';
-import { AppConfig } from 'config';
+import { AppConfig } from '@config';
 
 const isProduction = process.env.NODE_ENV === 'production';
 

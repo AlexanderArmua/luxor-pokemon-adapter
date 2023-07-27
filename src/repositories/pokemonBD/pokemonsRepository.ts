@@ -1,5 +1,5 @@
 import prisma from '@db/prisma-client';
-import { Pokemon, Prisma } from '@prisma/client';
+import { Pokemon } from '@prisma/client';
 
 export class PokemonRepository {
   private static instance: PokemonRepository;
@@ -12,8 +12,21 @@ export class PokemonRepository {
     return PokemonRepository.instance;
   }
 
-  async findAll(): Promise<Pokemon[]> {
-    return await prisma.pokemon.findMany();
+  async findAll(skip: number, take: number): Promise<Pokemon[]> {
+    const minNumber = skip + 1;
+    const maxNumber = skip + take;
+
+    return await prisma.pokemon.findMany({
+      where: {
+        number: {
+          gte: minNumber,
+          lte: maxNumber,
+        }
+      },
+      orderBy: {
+        number: 'asc'
+      }
+    });
   }
 
   async findOneByPokemonId(pokemonId: string): Promise<Pokemon | null> {
@@ -32,13 +45,20 @@ export class PokemonRepository {
     })
   }
 
-  async storeOne(id: string, name: string, data: any): Promise<Pokemon | null> {
-    return await prisma.pokemon.create({
-      data: {
+  // TODO: Validar que no exista?
+  // TODO: Explain that we can we can replace upser by a mutex in other languages
+  async storeOne(id: string, name: string, number: number, data: any): Promise<Pokemon | null> {
+    return await prisma.pokemon.upsert({
+      where: {
+        pokemonId: id
+      },
+      create: {
         name: name,
         pokemonId: id,
-        data: data
-      }
-    })
+        data: data,
+        number: number
+      },
+      update: {}
+    });
   }
 }

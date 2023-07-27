@@ -4,9 +4,11 @@ import { PokemonService } from '@services/pokemon/pokemon.service';
 
 const service = PokemonService.getInstance();
 
-const getPokemons = async (_req: Request, res: Response, next: NextFunction) => {
+const getPokemons = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const pokemons = await service.findAll();
+        const { skip, take } = req.body;
+
+        const pokemons = await service.findAll(skip, take);
 
         res.status(200).json(pokemons);
     } catch (error) {
@@ -26,11 +28,13 @@ const getPokemonByPokemonId = async (req: Request, res: Response, next: NextFunc
     }
 };
 
-const getPokemonByPokemonNumber = async (req: Request, res: Response, next: NextFunction) => {
+const getPokemonByPokemonName = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { pokemonNumber } = req.params;
+        const { pokemonName } = req.params;
 
-        res.status(201).json({ pokemon: { id: 1 } });
+        const pokemon = await service.findOneByPokemonName(pokemonName);
+
+        res.status(201).json(pokemon);
     } catch (error) {
         next(error);
     }
@@ -46,4 +50,4 @@ const addPokemonToCache = async (req: Request, res: Response, next: NextFunction
     }
 }
 
-export { getPokemons, getPokemonByPokemonId, getPokemonByPokemonNumber, addPokemonToCache };
+export { getPokemons, getPokemonByPokemonId, getPokemonByPokemonName, addPokemonToCache };

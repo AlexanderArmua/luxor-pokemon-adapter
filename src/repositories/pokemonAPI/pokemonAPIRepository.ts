@@ -1,6 +1,6 @@
 import { GraphQLClient, gql } from 'graphql-request';
-import { AppConfig } from 'config';
-import { PokemonApi, PokemonApiResponse } from '../../types/pokemons';
+import { AppConfig } from '@config';
+import { PokemonApi, PokemonApiResponse } from '@custom-types/pokemons';
 import { GraphQlTypes, pokemonFragment } from './graphqlTypes';
 
 const API_POKEMON_GRAPHQL = AppConfig.api.pokemons;
@@ -54,7 +54,7 @@ export class GraphQlApiRepository {
         return response?.pokemon || null;
     }
 
-    async getPokemonsInRange(_start: number, end: number): Promise<PokemonApi[]> {
+    async getPokemonsInRange(take: number): Promise<PokemonApi[]> {
         const query = gql`
             query Pokemons($first: Int!) {
                 pokemons(first: $first) {
@@ -64,7 +64,7 @@ export class GraphQlApiRepository {
             ${pokemonFragment}
         `;
 
-        const variables = { first: end };
+        const variables = { first: take };
 
         const response = await this.makeGraphQLQuery<PokemonApiResponse>(query, variables)
 

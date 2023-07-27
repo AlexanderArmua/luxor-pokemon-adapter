@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { getPokemons, getPokemonByPokemonId, getPokemonByPokemonNumber, addPokemonToCache } from '@controllers/pokemon.controller';
+import { getPokemons, getPokemonByPokemonId, getPokemonByPokemonName, addPokemonToCache } from '@controllers/pokemon.controller';
 
 const router = Router();
 
-router.get('/', getPokemons);
+router.post('/byRange', getPokemons);
 
 router.get('/byId/:pokemonId', getPokemonByPokemonId);
 
-router.get('/byNumber/:pokemonNumber', getPokemonByPokemonNumber);
+router.get('/byName/:pokemonName', getPokemonByPokemonName);
 
 router.post('/', addPokemonToCache);
 

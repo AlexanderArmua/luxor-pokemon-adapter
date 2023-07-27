@@ -1,7 +1,7 @@
 import express from 'express';
 import routerApi from '@routes/index';
 import { logErrors, errorHandler, boomErrorHandler } from '@middlewares/errorMiddleware';
-import { AppConfig } from 'config';
+import { AppConfig } from '@config';
 
 //import { EventProvider } from '@core/events/event.provider';
 

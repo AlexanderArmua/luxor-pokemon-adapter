@@ -43,4 +43,3 @@ interface PokemonEvolutionRequirement {
   amount: number;
   name: string;
 }
-// TODO: Crear un @types para esta carpeta

@@ -11,11 +11,13 @@ model Pokemon {
   id        Int    @id @default(autoincrement())
   pokemonId String @unique @map("pokemon_id")
   name      String @unique
+  number    Int    @unique
   data      Json
 
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
+  @@index([number], type: BTree)
   @@map("pokemons")
 }
