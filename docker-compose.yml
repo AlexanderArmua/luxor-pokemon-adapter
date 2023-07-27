@@ -1,6 +1,14 @@
 version: '3.8'
 
 services:
+  # server:
+  #   build: .
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - postgres
+  #   restart: on-failure
+
   postgres:
     image: postgres:13
     environment:
@@ -19,4 +27,3 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=root
     ports:
       - 5050:80
-
