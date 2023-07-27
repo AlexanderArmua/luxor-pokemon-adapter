@@ -1690,6 +1690,18 @@
   "resolved" "https://registry.npmjs.org/@graphql-typed-document-node/core/-/core-3.2.0.tgz"
   "version" "3.2.0"
 
+"@hapi/boom@^10.0.1":
+  "integrity" "sha512-ERcCZaEjdH3OgSJlyjVk8pHIFeus91CjKP3v+MpgBNp5IvGzP2l/bRiD78nqYcKPaZdbKkK5vDBVPd2ohHBlsA=="
+  "resolved" "https://registry.npmjs.org/@hapi/boom/-/boom-10.0.1.tgz"
+  "version" "10.0.1"
+  dependencies:
+    "@hapi/hoek" "^11.0.2"
+
+"@hapi/hoek@^11.0.2":
+  "integrity" "sha512-aKmlCO57XFZ26wso4rJsW4oTUnrgTFw2jh3io7CAtO9w4UltBNwRXvXIVzzyfkaaLRo3nluP/19msA8vDUUuKw=="
+  "resolved" "https://registry.npmjs.org/@hapi/hoek/-/hoek-11.0.2.tgz"
+  "version" "11.0.2"
+
 "@humanwhocodes/config-array@^0.10.5":
   "integrity" "sha512-MDl6D6sBsaV452/QSdX+4CXIjZhIcI0PELsxUjk4U828yd58vk3bTIvk/6w5FY+4hIy9sLW0sfrV7K7Kc++j/w=="
   "resolved" "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.10.7.tgz"

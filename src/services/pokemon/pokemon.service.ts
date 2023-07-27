@@ -28,14 +28,18 @@ export class PokemonService {
     }
 
     const pokemonsAPI = await PokemonService.pokemonAPI.getPokemonsInRange(skip + take);
-    if (pokemonsAPI.length > 0) {
+    if (pokemonsAPI.length > 0) {      
       for (const newPokemon of pokemonsAPI) {
         // TODO: Explicar el problema de no tener un mutex, como puede pasar que dos pokemons pueden tratar de insertarse al mismo tiempo
         EventManager.emitNewPokemon(newPokemon);
       }
+
+      // TODO: Asumimos que la API devuelve ordenado
+      // TODO: Take que supere el límite de la BD retorna cosas innecesarias
+      return pokemonsAPI.slice(-take);
     }
 
-    return pokemonsAPI.slice(-take);
+    return [];
   }
 
   async findOneByPokemonId(pokemonId: string): Promise<PokemonApi | null> {
@@ -47,9 +51,11 @@ export class PokemonService {
     const pokemonAPI = await PokemonService.pokemonAPI.getPokemonById(pokemonId);
     if (pokemonAPI) {
       EventManager.emitNewPokemon(pokemonAPI);
+
+      return pokemonAPI;
     }
 
-    return pokemonAPI;
+    return null;
   }
 
   async findOneByPokemonName(pokemonName: string): Promise<PokemonApi | null> {
@@ -61,9 +67,11 @@ export class PokemonService {
     const pokemonAPI = await PokemonService.pokemonAPI.getPokemonByName(pokemonName);
     if (pokemonAPI) {
       EventManager.emitNewPokemon(pokemonAPI);
+
+      return pokemonAPI
     }
 
-    return pokemonAPI;
+    return null;
   }
 
   async storeOne(data: PokemonApi): Promise<PokemonApi | null> {

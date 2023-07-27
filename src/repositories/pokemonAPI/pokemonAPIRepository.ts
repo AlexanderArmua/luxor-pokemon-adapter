@@ -1,4 +1,4 @@
-import { GraphQLClient, gql } from 'graphql-request';
+import { GraphQLClient } from 'graphql-request';
 import { AppConfig } from '@config';
 import { PokemonApi, PokemonApiResponse } from '@custom-types/pokemons';
 import { GET_POKEMONS_GQL_RANGE, GET_POKEMON_GQL_BY_ID, GET_POKEMON_GQL_BY_NAME, GraphQlTypes } from './graphqlTypes';

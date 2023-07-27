@@ -30,9 +30,6 @@ app.use(boomErrorHandler);
 // Non Boom error handlers
 app.use(errorHandler);
 
-// Initialize event provider
-//new EventProvider();
-
 app.listen(AppConfig.port, () => {
     console.log(`Example app listening on port ${AppConfig.port}`)
 });

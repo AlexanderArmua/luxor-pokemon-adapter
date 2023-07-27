@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { PokemonService } from '@services/pokemon/pokemon.service';
 import { PokemonApi } from '@custom-types/pokemons';
+import boom from '@hapi/boom';
 
 const service = PokemonService.getInstance();
 
@@ -8,6 +9,7 @@ const getPokemons = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { skip, take } = req.body;
 
+        // TODO: ADD PAGE INFO
         const pokemons = await service.findAll(skip, take);
 
         res.status(200).json(pokemons);
@@ -21,8 +23,11 @@ const getPokemonByPokemonId = async (req: Request, res: Response, next: NextFunc
         const { pokemonId } = req.params;
 
         const pokemon = await service.findOneByPokemonId(pokemonId);
+        if (!pokemon) {
+            throw boom.notFound("Pokemon not found");
+        }
 
-        res.status(201).json(pokemon);
+        res.status(200).json(pokemon);
     } catch (error) {
         next(error);
     }
@@ -33,8 +38,11 @@ const getPokemonByPokemonName = async (req: Request, res: Response, next: NextFu
         const { pokemonName } = req.params;
 
         const pokemon = await service.findOneByPokemonName(pokemonName);
+        if (!pokemon) {
+            throw boom.notFound("Pokemon not found");
+        }
 
-        res.status(201).json(pokemon);
+        res.status(200).json(pokemon);
     } catch (error) {
         next(error);
     }
@@ -45,6 +53,9 @@ const addPokemonToCache = async (req: Request, res: Response, next: NextFunction
         const body: PokemonApi = req.body;
 
         const newPokemon = await service.storeOne(body);
+        if (!newPokemon) {
+            throw boom.badImplementation("Pokemon not found");
+        }
 
         res.status(201).json({ newPokemon });
     } catch (error) {
