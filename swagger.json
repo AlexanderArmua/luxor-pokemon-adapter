@@ -2,7 +2,7 @@
     "openapi": "3.0.3",
     "info": {
       "title": "Pokemon API",
-      "version": "1.0.0",
+      "version": "0.0.1",
       "description": "API to fetch Pokemon information"
     },
     "servers": [
@@ -11,7 +11,7 @@
       }
     ],
     "paths": {
-      "/health": {
+      "/api/v1/health": {
         "get": {
           "summary": "Check server health",
           "responses": {

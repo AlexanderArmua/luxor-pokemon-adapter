@@ -77,7 +77,6 @@ export class PokemonService {
   async storeOne(data: PokemonApi): Promise<PokemonApi | null> {
     const pokemonCreated = await PokemonService.pokemonDB.storeOne(data.id, data.name, Number(data.number), data);
 
-    // TODO: Buscar la forma en la que se pueda evitar esta transformación
     return pokemonCreated?.data as unknown as PokemonApi;
   }
 }
