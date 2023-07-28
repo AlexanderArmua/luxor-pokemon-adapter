@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { PokemonService } from '@services/pokemon/pokemon.service';
-import { PokemonApi } from '@custom-types/pokemons';
 import boom from '@hapi/boom';
+import { PokemonApi } from '@custom-types/pokemons';
 
 const service = PokemonService.getInstance();
 
@@ -9,10 +9,10 @@ const getPokemons = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { skip, take } = req.body;
 
-        // TODO: ADD PAGE INFO
         const pokemons = await service.findAll(skip, take);
-
-        res.status(200).json(pokemons);
+        
+        // @ts-ignore
+        res.sendSuccess(200, pokemons);
     } catch (error) {
         next(error);
     }
@@ -27,7 +27,8 @@ const getPokemonByPokemonId = async (req: Request, res: Response, next: NextFunc
             throw boom.notFound("Pokemon not found");
         }
 
-        res.status(200).json(pokemon);
+        // @ts-ignore
+        res.sendSuccess(200, pokemon);
     } catch (error) {
         next(error);
     }
@@ -42,7 +43,8 @@ const getPokemonByPokemonName = async (req: Request, res: Response, next: NextFu
             throw boom.notFound("Pokemon not found");
         }
 
-        res.status(200).json(pokemon);
+        // @ts-ignore
+        res.sendSuccess(200, pokemon);
     } catch (error) {
         next(error);
     }
@@ -57,7 +59,8 @@ const addPokemonToCache = async (req: Request, res: Response, next: NextFunction
             throw boom.badImplementation("Pokemon not found");
         }
 
-        res.status(201).json({ newPokemon });
+        // @ts-ignore
+        res.sendSuccess(201, newPokemon);
     } catch (error) {
         next(error);
     }

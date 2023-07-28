@@ -3,6 +3,7 @@
     "require": ["tsconfig-paths/register"]
   },
   "compilerOptions": {
+    "typeRoots": ["./node_modules/@types", "./@types/*"],
     "module": "commonjs",
     "lib": ["ES2022", "esnext.asynciterable", "WebWorker"],
     "declaration": true,

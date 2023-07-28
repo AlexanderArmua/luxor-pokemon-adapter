@@ -6,6 +6,7 @@ import { startEventProvider } from '@events';
 
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from '../swagger.json'
+import { responseFormatterMiddleware } from '@middlewares/express-extended-response';
 
 const app = express();
 
@@ -17,6 +18,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Handle events
 startEventProvider();
+
+// Generic response middleware
+app.use(responseFormatterMiddleware);
 
 // Define all routes
 routerApi(app);
