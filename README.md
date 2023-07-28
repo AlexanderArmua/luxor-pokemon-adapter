@@ -28,13 +28,19 @@ cd luxor-pokemon-adapter
 yarn start:all
 ```
 
-The service will be available at http://localhost:3000.
+The service will be available at [http://localhost:3000](http://localhost:3000)
 
 ## API Documentation
 
 The API exposed by the service is documented using OpenAPI. You can find the complete specification at the following link:
 
 [http://localhost:3000/api-docs/](http://localhost:3000/api-docs/)
+
+## Database Client
+
+We use pgadmin4 to start a postgresql web client to query directly the database
+- User: alexander@mail.com
+- Pass: root
 
 ## Approach Taken
 
@@ -70,6 +76,9 @@ The required environment variables to configure the service are as follows:
 - yarn dev: Start the service in development mode using nodemon for automatic restart.
 - yarn migrate:prod: Deploy database migrations in production environment using Prisma.
 - yarn prisma:generate: Generates Prisma Database client library to allow us to interact with the database using a type-safe API.
+
+## Layer Diagram
+![Luxor Pokemon Adapter Layer Diagram](./Pokemon%20Luxor%20Adapter.png)
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
