@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// TODO: Explicar que no se podía hacer mas y no era necesario sacarlo del data
 model Pokemon {
   id        Int    @id @default(autoincrement())
   pokemonId String @unique @map("pokemon_id")
@@ -15,10 +14,24 @@ model Pokemon {
   number    Int    @unique
   data      Json
 
+  evolutions Evolution[] @relation(name: "future_evolution")
+  baseEvolution Evolution[] @relation(name: "previous_evolution")
+  
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   @@index([number], type: BTree)
   @@map("pokemons")
+}
+
+model Evolution {
+  basePokemonId   Int @map("base_pokemon_id")
+  futurePokemonId Int @map("future_pokemon_id")
+
+  basePokemon Pokemon @relation(name: "previous_evolution", fields: [futurePokemonId], references: [id], onDelete: Cascade)
+  futurePokemon Pokemon @relation(name: "future_evolution", fields: [basePokemonId], references: [id], onDelete: Cascade)
+
+  @@id([basePokemonId, futurePokemonId])
+  @@map("evolutions")
 }

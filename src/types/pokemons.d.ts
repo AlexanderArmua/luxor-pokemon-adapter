@@ -11,13 +11,13 @@ export type PokemonApi = {
   weight: PokemonDimension
   height: PokemonDimension
   classification: string
-  types: [string]
-  resistant: [string]
+  types: string[]
+  resistant: string[]
   attacks: PokemonAttack
-  weaknesses: [string]
+  weaknesses: string[]
   fleeRate: number
   maxCP: number
-  evolutions: [PokemonApi]
+  evolutions: PokemonApi[]
   evolutionRequirements: PokemonEvolutionRequirement
   maxHP: number
   image: string

@@ -47,9 +47,10 @@ const pokemonFragment = gql`
   fragment PokemonFragment on Pokemon {
     ...PokemonBaseFragment
     evolutions {
-      id
-      name
-      number
+      ...PokemonBaseFragment
+      evolutions {
+        ...PokemonBaseFragment
+      }
     }
   }
   ${pokemonBaseFragment}

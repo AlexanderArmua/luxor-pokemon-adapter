@@ -80,6 +80,12 @@ The required environment variables to configure the service are as follows:
 ## Layer Diagram
 ![Luxor Pokemon Adapter Layer Diagram](./Pokemon%20Luxor%20Adapter.png)
 
+## Improvements
+Here is a list of assumtions or 
+1. We assume maximum 3 levels of evolutions.
+2. 
+
+
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
