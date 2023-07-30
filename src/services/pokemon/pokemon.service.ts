@@ -3,6 +3,7 @@ import { PokemonRepository } from '@repositories/pokemonBD/pokemonsRepository';
 import { PokemonApi } from '@custom-types/pokemons';
 import { EventManager } from 'lib/events/event.manager';
 import { PokemonBD } from '@repositories/pokemonBD/types';
+import { logger } from '@logger';
 
 const mapPokemonFromDbToService = (pokemon: PokemonBD): PokemonApi => {
   const evolutions = pokemon.evolutions.map(evolution => evolution.basePokemon as unknown as PokemonApi);
@@ -32,30 +33,38 @@ export class PokemonService {
   }
 
   async findAll(skip: number, take: number): Promise<PokemonApi[]> {
+    const log = logger.child({ method: "findAll", skip, take });
+
     const pokemonsDB = await PokemonService.pokemonDB.findAll(skip, take);
-    
-    // TODO: No podemos saber cuando termina porque la API no nos da esa información
     if (pokemonsDB.length === take) {
+      log.info("Found all pokemons in DB, returning");
+
       return mapPokemonsFromDbToService(pokemonsDB);
     }
 
+    log.info({ pokemonsDB: pokemonsDB.length }, "Doesn't have all pokemons in DB, calling to API");
     const pokemonsAPI = await PokemonService.pokemonAPI.getPokemonsInRange(skip + take);
     if (pokemonsAPI.length > 0) {      
       for (const newPokemon of pokemonsAPI) {
         EventManager.emitNewPokemon(newPokemon);
       }
 
-      // TODO: Asumimos que la API devuelve ordenado
-      // TODO: Take que supere el límite de la BD retorna cosas innecesarias
+      log.info("Returning pokemons from API");
+
       return pokemonsAPI.slice(-take);
     }
+
+    log.warn("Couldn't find any pokemon return empty");
 
     return [];
   }
 
   async findOneByPokemonId(pokemonId: string): Promise<PokemonApi | null> {
+    const log = logger.child({ method: "findOneByPokemonId", pokemonId });
+
     const pokemon = await PokemonService.pokemonDB.findOneByPokemonId(pokemonId);
     if (pokemon) {
+      log.info({ pokemon }, "Found pokemon on BD, returning");
       return mapPokemonFromDbToService(pokemon);
     }
 
@@ -63,32 +72,41 @@ export class PokemonService {
     if (pokemonAPI) {
       EventManager.emitNewPokemon(pokemonAPI);
 
+      log.info({ pokemonAPI }, "Found pokemon on API, returning");
+
       return pokemonAPI;
     }
+
+    log.warn("Couldn't find any pokemon returning null");
 
     return null;
   }
 
   async findOneByPokemonName(pokemonName: string): Promise<PokemonApi | null> {
+    const log = logger.child({ method: "findOneByPokemonName", pokemonName });
+
     const pokemon = await PokemonService.pokemonDB.findOneByPokemonName(pokemonName);
     if (pokemon) {
+      log.info({ pokemon }, "Found pokemon on BD, returning");
       return mapPokemonFromDbToService(pokemon);
     }
 
     const pokemonAPI = await PokemonService.pokemonAPI.getPokemonByName(pokemonName);
     if (pokemonAPI) {
-      // TODO: Si el pokemon tiene evoluciones, hay que generar llamadas recursiva por cada una hasta que no tenga
       EventManager.emitNewPokemon(pokemonAPI);
+
+      log.info({ pokemonAPI }, "Found pokemon on API, returning");
 
       return pokemonAPI
     }
+
+    log.warn("Couldn't find any pokemon returning null");
 
     return null;
   }
 
   async storeOne(data: PokemonApi): Promise<PokemonApi | null> {
     const pokemonCreated = await PokemonService.pokemonDB.storeOne(data.id, data.name, Number(data.number), data);
-
     if (!pokemonCreated) {
       return null;
     }

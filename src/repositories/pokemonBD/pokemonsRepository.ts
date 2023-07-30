@@ -78,8 +78,6 @@ export class PokemonRepository {
     })
   }
 
-  // TODO: Explicar que utilizamos upsert por no tener un mutex
-  // TODO: Mejorar y ver si se puede hacer todo en una sola transacción
   async storeOne(pokemonId: string, name: string, number: number, pokemonData: PokemonApi): Promise<PokemonBD | null> {
     const pokemonBase = await this.upsertPokemonWithoutEvolutions(pokemonId, name, number, pokemonData);
 

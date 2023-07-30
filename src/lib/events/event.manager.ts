@@ -1,3 +1,4 @@
+import { logger } from '@logger';
 import { PokemonEventEmitter } from './event.emitter';
 import { POKEMON_EVENTS } from './handleEvents';
 
@@ -9,6 +10,7 @@ export class EventManager {
     }
 
     public static emitNewPokemon(data: any): void {
+        logger.info("Emitting event new pokemon to create");
         this.emitEvent(POKEMON_EVENTS.NEW_POKEMON_CREATED, data);
     }
 }
