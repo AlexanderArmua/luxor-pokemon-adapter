@@ -80,6 +80,16 @@ The required environment variables to configure the service are as follows:
 ## Layer Diagram
 ![Luxor Pokemon Adapter Layer Diagram](./Pokemon%20Luxor%20Adapter.png)
 
+## Mentions
+Here is a list of assumtions or improvements that could be done
+1. Evolutions: We request to GRAPHQL API for a maximum of 3 evolutions, then recursively start to inserting al pokemons. The adapter has to be modified if we want to support new evolutions types (like super-evolutions wich is with two pokemons fusionated).
+2. Pokemon Repository and Concurrency: Another solution instead of an upser it could be to use a MUTEX. For example, we don't know if 2 different users request for the same pokemon that doesn't exist in our database, both will go to the API and both will generate an event to insert. If we have a micro-service architecture it will be necesary to implement an external MUTEX server, to lock the code flow for that pokemon and allowing only one thread to insert. I replaced that implementation using an upsert.
+3. Pokemon Repository inserting evolutions (storeOne): I couldn't find a prisma query that allows me to do recursive inserts for a pokemon and it's evolutions, so I decided to implement a recursive function to insert a pokemon, then their evolutions and finally they relationship between the first pokemon and their evolutions. The only issue is if in the middle of the process something crashes and stop saving we could have inconcistent data. An approach to avoid it could be to create all transactions but call them all at the same time using prisma.$transaction so, we are sure is an atomic operation. And another could be to set a flag on each pokemon like "synced" and only return data from adapter if exists and the flag is on "true".
+4. Pagination: The graphql adapter doesn't tell us how many pokemons exists in consecuence we cannot tell to the user how is the maximum. That's the reason because we only have "skip" and "take".
+5. Pagination: We asume that pokemons on Graphql api are sorted by number, anyway it can be solved implementing a sort function or calling again itself after syncing all pokemons to return in good format.
+6. Pagination trade offs on last results: As the adapter couldn't know how many pokemons exists on the API, if an user calls to the adapter and puts "skip: 150, take: 10", the database will only find 1 pokemon and then will call to the API, the API will return results and then will be returned to the user. But even though this result has been cached, we don't know if in the future the API implements new pokemons so maybe exists a pokemon 152.
+7. ts-ignore on controllers: I created a middleware to add a function on "response" to return easily with the same format all success messages. But typescript on transpile time failed and I added that comment to allow me to continue working.
+
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
 

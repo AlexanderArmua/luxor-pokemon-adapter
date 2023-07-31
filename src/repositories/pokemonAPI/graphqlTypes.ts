@@ -2,7 +2,6 @@ import { gql } from "graphql-request";
 
 export type GraphQlTypes = string | number | boolean;
 
-//  TODO: Mejorar mecanismo de evoluciones para no tener que guardar duplicado
 const pokemonBaseFragment = gql`
   fragment PokemonBaseFragment on Pokemon {
     id
@@ -47,14 +46,14 @@ const pokemonFragment = gql`
   fragment PokemonFragment on Pokemon {
     ...PokemonBaseFragment
     evolutions {
-      id
-      name
-      number
+      ...PokemonBaseFragment
+      evolutions {
+        ...PokemonBaseFragment
+      }
     }
   }
   ${pokemonBaseFragment}
 `;
-
 
 const GET_POKEMON_GQL_BY_NAME = gql`
   query Pokemon($name: String) {

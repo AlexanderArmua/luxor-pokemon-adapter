@@ -1,20 +1,23 @@
 import { AppConfig } from '@config';
+import { logger } from '@logger';
 
 const customHeaders = {
     "Content-Type": "application/json",
 }
 
 const handleEventNewPokemon = async (pokemnonData: any) => {
+    const log = logger.child({ method: "handleEventNewPokemon", data: pokemnonData });
+    
     try {
         await fetch(AppConfig.pokemonAdapterUrl, { 
             headers: customHeaders,
             body: JSON.stringify(pokemnonData), 
             method: "POST" 
         });
-        console.log("CREADO")
+
+        log.info("Pokemon created");
     } catch (err) {
-        // TODO: Validar errores
-        console.error("TODO: Ocurrió un error al guardar acá");
+        log.error({ err }, "Error creating pokemon");
     }
 }
 

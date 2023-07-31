@@ -2,6 +2,21 @@ import { GraphQlApiRepository } from '@repositories/pokemonAPI/pokemonAPIReposit
 import { PokemonRepository } from '@repositories/pokemonBD/pokemonsRepository';
 import { PokemonApi } from '@custom-types/pokemons';
 import { EventManager } from 'lib/events/event.manager';
+import { PokemonBD } from '@repositories/pokemonBD/types';
+import { logger } from '@logger';
+
+const mapPokemonFromDbToService = (pokemon: PokemonBD): PokemonApi => {
+  const evolutions = pokemon.evolutions.map(evolution => evolution.basePokemon as unknown as PokemonApi);
+
+  return {
+    ...pokemon.data as unknown as PokemonApi,
+    evolutions
+  };
+}
+
+const mapPokemonsFromDbToService = (pokemons: PokemonBD[]): PokemonApi[] => {
+  return pokemons.map(mapPokemonFromDbToService);
+}
 
 export class PokemonService {
   private static instance: PokemonService;
@@ -18,65 +33,84 @@ export class PokemonService {
   }
 
   async findAll(skip: number, take: number): Promise<PokemonApi[]> {
-    // TODO: Podría llamarse a un COUNT primero y evitar traerse todos los datos, dado que no se hace ningun join no lo considero prioritario
-    const pokemonsDB = await PokemonService.pokemonDB.findAll(skip, take);
+    const log = logger.child({ method: "findAll", skip, take });
 
-    // TODO: Si de maximo hay 150 resultados y alguien pide 10 a partir del 149, nunca va a dar la cuenta
-      // resultando en que siempre se vaya a la API aun cuando no hay información nueva
+    const pokemonsDB = await PokemonService.pokemonDB.findAll(skip, take);
     if (pokemonsDB.length === take) {
-      return pokemonsDB.map(p => p.data as unknown as PokemonApi);
+      log.info("Found all pokemons in DB, returning");
+
+      return mapPokemonsFromDbToService(pokemonsDB);
     }
 
-    const pokemonsAPI = await PokemonService.pokemonAPI.getPokemonsInRange(skip + take);
+    log.info({ pokemonsDB: pokemonsDB.length }, "Doesn't have all pokemons in DB, calling to API");
+    const pokemonsAPI = await PokemonService.pokemonAPI.getPokemonsInRange(skip, take);
     if (pokemonsAPI.length > 0) {      
       for (const newPokemon of pokemonsAPI) {
-        // TODO: Explicar el problema de no tener un mutex, como puede pasar que dos pokemons pueden tratar de insertarse al mismo tiempo
         EventManager.emitNewPokemon(newPokemon);
       }
 
-      // TODO: Asumimos que la API devuelve ordenado
-      // TODO: Take que supere el límite de la BD retorna cosas innecesarias
-      return pokemonsAPI.slice(-take);
+      log.info("Returning pokemons from API");
+
+      return pokemonsAPI;
     }
+
+    log.warn("Couldn't find any pokemon return empty");
 
     return [];
   }
 
   async findOneByPokemonId(pokemonId: string): Promise<PokemonApi | null> {
+    const log = logger.child({ method: "findOneByPokemonId", pokemonId });
+
     const pokemon = await PokemonService.pokemonDB.findOneByPokemonId(pokemonId);
     if (pokemon) {
-      return pokemon.data as unknown as PokemonApi;
+      log.info({ pokemon }, "Found pokemon on BD, returning");
+      return mapPokemonFromDbToService(pokemon);
     }
 
     const pokemonAPI = await PokemonService.pokemonAPI.getPokemonById(pokemonId);
     if (pokemonAPI) {
       EventManager.emitNewPokemon(pokemonAPI);
 
+      log.info({ pokemonAPI }, "Found pokemon on API, returning");
+
       return pokemonAPI;
     }
+
+    log.warn("Couldn't find any pokemon returning null");
 
     return null;
   }
 
   async findOneByPokemonName(pokemonName: string): Promise<PokemonApi | null> {
+    const log = logger.child({ method: "findOneByPokemonName", pokemonName });
+
     const pokemon = await PokemonService.pokemonDB.findOneByPokemonName(pokemonName);
     if (pokemon) {
-      return pokemon.data as unknown as PokemonApi;
+      log.info({ pokemon }, "Found pokemon on BD, returning");
+      return mapPokemonFromDbToService(pokemon);
     }
 
     const pokemonAPI = await PokemonService.pokemonAPI.getPokemonByName(pokemonName);
     if (pokemonAPI) {
       EventManager.emitNewPokemon(pokemonAPI);
 
+      log.info({ pokemonAPI }, "Found pokemon on API, returning");
+
       return pokemonAPI
     }
+
+    log.warn("Couldn't find any pokemon returning null");
 
     return null;
   }
 
   async storeOne(data: PokemonApi): Promise<PokemonApi | null> {
     const pokemonCreated = await PokemonService.pokemonDB.storeOne(data.id, data.name, Number(data.number), data);
+    if (!pokemonCreated) {
+      return null;
+    }
 
-    return pokemonCreated?.data as unknown as PokemonApi;
+    return mapPokemonFromDbToService(pokemonCreated);
   }
 }

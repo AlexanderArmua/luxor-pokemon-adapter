@@ -1,5 +1,4 @@
 import pino from 'pino';
-import tracer from 'dd-trace';
 import { AppConfig } from '@config';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -10,11 +9,6 @@ const devOptions = {
   level: 'debug' as const,
   stream: process.stdout,
 };
-
-tracer.init({
-  logInjection: true,
-  service: AppConfig.logs.serviceName,
-});
 
 let streams = [isProduction ? prodOptions : devOptions];
 

@@ -7,6 +7,7 @@ import { startEventProvider } from '@events';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from '../swagger.json'
 import { responseFormatterMiddleware } from '@middlewares/express-extended-response';
+import { logger } from '@logger';
 
 const app = express();
 
@@ -35,5 +36,5 @@ app.use(boomErrorHandler);
 app.use(errorHandler);
 
 app.listen(AppConfig.port, () => {
-    console.log(`Example app listening on port ${AppConfig.port}`)
+    logger.info(`Luxor Pokemon Adapter listening on port: ${AppConfig.port}`)
 });

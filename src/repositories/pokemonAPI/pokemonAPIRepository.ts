@@ -2,6 +2,7 @@ import { GraphQLClient } from 'graphql-request';
 import { AppConfig } from '@config';
 import { PokemonApi, PokemonApiResponse } from '@custom-types/pokemons';
 import { GET_POKEMONS_GQL_RANGE, GET_POKEMON_GQL_BY_ID, GET_POKEMON_GQL_BY_NAME, GraphQlTypes } from './graphqlTypes';
+import { getPaginatedResults } from './pagination';
 
 const API_POKEMON_GRAPHQL = AppConfig.api.pokemons;
 
@@ -36,11 +37,11 @@ export class GraphQlApiRepository {
         return response?.pokemon || null;
     }
 
-    async getPokemonsInRange(take: number): Promise<PokemonApi[]> {
-        const variables = { first: take };
+    async getPokemonsInRange(skip: number, take: number): Promise<PokemonApi[]> {
+        const variables = { first: skip + take };
 
-        const response = await this.makeGraphQLQuery<PokemonApiResponse>(GET_POKEMONS_GQL_RANGE, variables)
+        const response = await this.makeGraphQLQuery<PokemonApiResponse>(GET_POKEMONS_GQL_RANGE, variables);
 
-        return response?.pokemons || [];
+        return getPaginatedResults<PokemonApi>(skip, response?.pokemons);
     }
 }
