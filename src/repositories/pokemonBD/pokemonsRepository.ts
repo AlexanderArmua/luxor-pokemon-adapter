@@ -78,42 +78,40 @@ export class PokemonRepository {
     })
   }
 
-  async storeOne(pokemonId: string, name: string, number: number, pokemonData: PokemonApi): Promise<PokemonBD | null> {
-    const pokemonBase = await this.upsertPokemonWithoutEvolutions(pokemonId, name, number, pokemonData);
-
-    let pokemonEvolutions: (PokemonBD | null)[] = [];
-    if (pokemonData.evolutions && pokemonData.evolutions.length > 0) {
-      pokemonEvolutions = await Promise.all(
-        pokemonData.evolutions.map((evolution) => {
-          const newPokemon = this.storeOne(evolution.id, evolution.name, Number(evolution.number), evolution);
-
-          return newPokemon;
-        })
-      );
-    }
-
+  async upserEvolutions(pokemonBaseId: number, pokemonEvolutions: PokemonBD[]): Promise<void> {
     await Promise.all(
       pokemonEvolutions.map((evolution) => {
-        if (!evolution) {
-          return;
-        }
-
         return prisma.evolution.upsert({
           where: {
             basePokemonId_futurePokemonId: {
-              basePokemonId: pokemonBase.id,
+              basePokemonId: pokemonBaseId,
               futurePokemonId: evolution.id
             }
           },
           update: {},
           create: {
-            basePokemonId: pokemonBase.id,
+            basePokemonId: pokemonBaseId,
             futurePokemonId: evolution.id
           }
         })
       })
     );
+  }
 
-    return await this.findOneByPokemonId(pokemonId);
+  async storeOne(pokemonId: string, name: string, number: number, pokemonData: PokemonApi): Promise<PokemonBD> {
+    const pokemonBase = await this.upsertPokemonWithoutEvolutions(pokemonId, name, number, pokemonData);
+
+    let pokemonEvolutions: PokemonBD[] = [];
+    if (pokemonData.evolutions && pokemonData.evolutions.length > 0) {
+      pokemonEvolutions = await Promise.all(
+        pokemonData.evolutions.map((evolution) => {
+          return this.storeOne(evolution.id, evolution.name, Number(evolution.number), evolution);
+        })
+      );
+    }
+
+    await this.upserEvolutions(pokemonBase.id, pokemonEvolutions);
+
+    return await this.findOneByPokemonId(pokemonId) as PokemonBD;
   }
 }
