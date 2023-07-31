@@ -36,10 +36,9 @@ The API exposed by the service is documented using OpenAPI. You can find the com
 [http://localhost:3000/api-docs/](http://localhost:3000/api-docs/)
 
 ## Database Client
-
-We use pgadmin4 to start a postgresql web client to query directly the database
-- User: alexander@mail.com
-- Pass: root
+We can check the database status, connecting to it with any Postgresql client. The credentials are the same as the .env file.
+- Username: alexander
+- Password: admin1234
 
 ## Approach Taken
 
@@ -88,6 +87,8 @@ Here is a list of assumtions or improvements that could be done
 5. Pagination: We asume that pokemons on Graphql api are sorted by number, anyway it can be solved implementing a sort function or calling again itself after syncing all pokemons to return in good format.
 6. Pagination trade offs on last results: As the adapter couldn't know how many pokemons exists on the API, if an user calls to the adapter and puts "skip: 150, take: 10", the database will only find 1 pokemon and then will call to the API, the API will return results and then will be returned to the user. But even though this result has been cached, we don't know if in the future the API implements new pokemons so maybe exists a pokemon 152.
 7. ts-ignore on controllers: I created a middleware to add a function on "response" to return easily with the same format all success messages. But typescript on transpile time failed and I added that comment to allow me to continue working.
+8. Credentials: In a real project I will never store them on a file like .env.example
+9. Docker: I couldn't run the entire project on Docker because unfurtunately in the last development phases I discovered to use Docker and prisma at the same time requires a new file to handle migrations [Link](https://stackoverflow.com/questions/66646432/how-do-i-run-prisma-migrations-in-a-dockerized-graphql-postgres-setup). 
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
