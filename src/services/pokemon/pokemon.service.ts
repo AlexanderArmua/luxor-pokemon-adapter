@@ -43,7 +43,7 @@ export class PokemonService {
     }
 
     log.info({ pokemonsDB: pokemonsDB.length }, "Doesn't have all pokemons in DB, calling to API");
-    const pokemonsAPI = await PokemonService.pokemonAPI.getPokemonsInRange(skip + take);
+    const pokemonsAPI = await PokemonService.pokemonAPI.getPokemonsInRange(skip, take);
     if (pokemonsAPI.length > 0) {      
       for (const newPokemon of pokemonsAPI) {
         EventManager.emitNewPokemon(newPokemon);
@@ -51,7 +51,7 @@ export class PokemonService {
 
       log.info("Returning pokemons from API");
 
-      return pokemonsAPI.slice(-take);
+      return pokemonsAPI;
     }
 
     log.warn("Couldn't find any pokemon return empty");
