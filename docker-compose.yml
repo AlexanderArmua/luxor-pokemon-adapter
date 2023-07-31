@@ -8,6 +8,8 @@ services:
   #   depends_on:
   #     - postgres
   #   restart: on-failure
+  #   networks:
+  #     - mynet
 
   postgres:
     image: postgres:13
@@ -19,11 +21,11 @@ services:
       - 5455:5432
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+#     networks:
+#       - mynet
 
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=alexander@mail.com
-      - PGADMIN_DEFAULT_PASSWORD=root
-    ports:
-      - 5050:80
+# networks:
+#   mynet:
+#     driver: bridge
+#     ipam:
+#       driver: default

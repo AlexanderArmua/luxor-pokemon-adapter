@@ -64,7 +64,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorNotFound"
+                    "$ref": "#/components/schemas/ErrorNotFoundById"
                   }
                 }
               }
@@ -102,7 +102,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorNotFound"
+                    "$ref": "#/components/schemas/ErrorNotFoundByName"
                   }
                 }
               }
@@ -131,6 +131,34 @@
                 "application/json": {
                   "schema": {
                     "$ref": "#/components/schemas/PokemonsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/pokemons": {
+        "post": {
+          "summary": "Inserts a new Pokemon and its evolutions",
+          "requestBody": {
+            "description": "Pokemon body with any level of evolutions nesting",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PokemonApi"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PokemonApi"
                   }
                 }
               }
@@ -225,10 +253,20 @@
             }
           }
         },
-        "ErrorNotFound": {
+        "ErrorNotFoundById": {
           "type": "object",
           "properties": {
-            "message": { "type": "string", "example": "Pokemon not found" }
+            "message": { "type": "string", "example": "Pokemon not found by id: {{Id}}" },
+            "error": { "type": "string", "example": "Not Found" },
+            "statusCode": { "type": "number", "example": 404 }
+          }
+        },
+        "ErrorNotFoundByName": {
+          "type": "object",
+          "properties": {
+            "message": { "type": "string", "example": "Pokemon not found by name: {{Name}}" },
+            "error": { "type": "string", "example": "Not Found" },
+            "statusCode": { "type": "number", "example": 404 }
           }
         }
       }

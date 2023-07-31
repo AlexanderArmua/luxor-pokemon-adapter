@@ -6,8 +6,6 @@ export const healthCheck = (_req: Request, res: Response) => {
 
     // @ts-ignore
     res.sendSuccess(200, {
-        statusCode: 200,
-        status: 'success',
-        message: 'Pokemon adapter is up and running...🚀 🚀 🚀',
+        status: 'Server is up and running 🚀 🚀 🚀'
     });
 }
