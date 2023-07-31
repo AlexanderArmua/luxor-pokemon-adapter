@@ -9,7 +9,6 @@ The Pokemon Adapter Service is an application that acts as an intermediary betwe
 - Docker
 - Docker Compose
 - NodeJs 18
-- Yarn
 
 ## How to Run the Service
 
@@ -25,7 +24,7 @@ cd luxor-pokemon-adapter
 
 3. Run all:
 ```bash
-yarn start:all
+npm run start:all
 ```
 
 The service will be available at [http://localhost:3000](http://localhost:3000)
@@ -73,9 +72,9 @@ The required environment variables to configure the service are as follows:
 
 ## Useful Commands
 
-- yarn dev: Start the service in development mode using nodemon for automatic restart.
-- yarn migrate:prod: Deploy database migrations in production environment using Prisma.
-- yarn prisma:generate: Generates Prisma Database client library to allow us to interact with the database using a type-safe API.
+- npm run dev: Start the service in development mode using nodemon for automatic restart.
+- npm run migrate:prod: Deploy database migrations in production environment using Prisma.
+- npm run prisma:generate: Generates Prisma Database client library to allow us to interact with the database using a type-safe API.
 
 ## Layer Diagram
 ![Luxor Pokemon Adapter Layer Diagram](./Pokemon%20Luxor%20Adapter.png)

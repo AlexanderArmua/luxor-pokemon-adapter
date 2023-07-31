@@ -4,16 +4,16 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN yarn install
+RUN npm run install
 
 COPY .env .env
 
 COPY . .
 
-RUN yarn migrate:prod
+RUN npm run migrate:prod
 
-RUN yarn prisma:generate
+RUN npm prisma:generate
 
 EXPOSE 3000
 
-CMD ["yarn", "dev"]
+CMD ["npm", "run dev"]
