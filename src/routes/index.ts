@@ -1,8 +1,8 @@
-import express from 'express';
+import express, { Express } from 'express';
 import pokemonsRoutes from '@routes/pokemon.route';
 import healthRoutes from '@routes/health.route';
 
-const routerApi = (app: any) => {
+const routerApi = (app: Express) => {
     const router = express.Router();
 
     router.use('/', healthRoutes);

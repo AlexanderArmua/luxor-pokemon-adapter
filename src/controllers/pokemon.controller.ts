@@ -15,7 +15,6 @@ const getPokemons = async (req: Request, res: Response, next: NextFunction) => {
 
         log.info({ skip, take, pokemons }, "Returned pokemons by range");
 
-        // @ts-ignore
         res.sendSuccess(200, pokemons);
     } catch (error) {
         next(error);
@@ -34,7 +33,6 @@ const getPokemonByPokemonId = async (req: Request, res: Response, next: NextFunc
 
         log.info({ pokemonId, pokemon }, "Returned pokemon by id");
 
-        // @ts-ignore
         res.sendSuccess(200, pokemon);
     } catch (error) {
         next(error);
@@ -52,7 +50,6 @@ const getPokemonByPokemonName = async (req: Request, res: Response, next: NextFu
         }
         log.info({ pokemonName, pokemon }, "Returned pokemon by name");
 
-        // @ts-ignore
         res.sendSuccess(200, pokemon);
     } catch (error) {
         next(error);
@@ -70,7 +67,6 @@ const addPokemonToCache = async (req: Request, res: Response, next: NextFunction
         }
         log.info({ newPokemon }, "Created new Pokemon");
 
-        // @ts-ignore
         res.sendSuccess(201, newPokemon);
     } catch (error) {
         next(error);

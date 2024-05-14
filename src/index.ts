@@ -3,7 +3,7 @@ import routerApi from '@routes/index';
 import { logErrors, errorHandler, boomErrorHandler } from '@middlewares/errorMiddleware';
 import { AppConfig } from '@config';
 import { startEventProvider } from '@events';
-
+import './@types/express';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from '../swagger.json'
 import { responseFormatterMiddleware } from '@middlewares/express-extended-response';
